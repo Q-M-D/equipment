@@ -1,0 +1,6 @@
+xlsx/*
+src/*
+build/*
+*.spec
+.vscode/*
+.idea/*
