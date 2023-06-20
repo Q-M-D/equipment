@@ -96,7 +96,7 @@ def imgAddFont_up(oldimg, width, height):
     # 创建一张白底，长为二维码上方高度，宽为二维码宽度的图片
     im = Image.new("RGB", (width, up_margin), (255, 255, 255))
     draw = ImageDraw.Draw(im)
-    fnt = ImageFont.truetype('C:\\Users\\LD\\Downloads\\auto_qr\\msyh.ttf', up_fontsize)
+    fnt = ImageFont.truetype('./msyh.ttf', up_fontsize)
     msg = '上海科技大学'
     w, h = draw.textsize(msg, font=fnt)
     draw.text(((width - w) / 2, 15), msg, fill='black', font=fnt)
@@ -184,7 +184,7 @@ def add_margins(qr_code, datadf, i, size_type):
     M, N = qr_code.size
     qr_code = imgAddFont_up(qr_code, M, N)
     M, N = qr_code.size
-    qr_code = imgAddFont_bottom(qr_code, M, N, str(datadf['资产编号'][i]), datadf['资产名称'][i],
+    qr_code = imgAddFont_bottom(qr_code, M, N, str(datadf['资产编码'][i]), datadf['资产名称'][i],
                                 datadf['财政资产编号'][i], note=datadf['备注'][i], size_type=size_type)
     return qr_code
 
@@ -223,6 +223,11 @@ def gen_qrcode(input_path, size_type, save_path=''):
     else:
         datadf = pd.read_excel(input_path)
     Infos = []
+    custom_col_tmp = entry2.get().split(' ')
+    custom_col = []
+    for element in custom_col_tmp:
+        if element != '':
+            custom_col.append(element)
     # 存储二维码图片的路径 默认是Excel表格的路径
     if save_path == '':
         save_path = input_path.split('/')[:-1]
@@ -230,8 +235,13 @@ def gen_qrcode(input_path, size_type, save_path=''):
     for i in range(len(datadf)):
         # 二维码中的信息
         all_cols = list(datadf.columns)
-        info_list = ['资产编码', '资产名称', '财政资产编号', '单价/元', '资产所属单位', '保管人', '责任人', '入库日期']
+        info_list = []
         info = ''
+        # 如果用户自定义了二维码中的信息
+        if custom_col:
+            info_list = custom_col
+        else:
+            info_list = ['资产编码', '资产名称', '财政资产编号', '单价/元', '资产所属单位', '保管人', '责任人', '入库日期']
         for col in info_list:
             if col in all_cols:
                 info += str(datadf[col][i]) + ' '
@@ -260,8 +270,8 @@ def gen_qrcode(input_path, size_type, save_path=''):
 
         # 打印图片并删除保存的图片文件
         # 注释掉以下两行可以不打印，只查看保存的二维码图片样式
-        print_img(save_file_path, SCALE, size_type)
-        os.remove(save_file_path)
+        # print_img(save_file_path, SCALE, size_type)
+        # os.remove(save_file_path)
     print('完成，共生成并打印', len(datadf), '个二维码')
 
 
@@ -282,7 +292,7 @@ if __name__ == "__main__":
     label_img.grid(row=0, column=0, ipady='10', ipadx='10', columnspan=2)
 
     # 第一行是文字说明
-    label_text = tk.Label(frm, text='二维码生成工具，请将egate导出的资产标签信息（.xlsx   文件）上传')
+    label_text = tk.Label(frm, text='二维码生成工具，请将egate导出的资产标签信息（.xlsx   文件）上传。')
     label_text.grid(row=1, column=0, ipady='10', ipadx='10', columnspan=2)
 
     # 第二行是上传文件的互动按钮以及打印源文件路径的文本框
@@ -290,6 +300,13 @@ if __name__ == "__main__":
     btn.grid(row=2, column=0, ipadx='3', ipady='3', padx='10', pady='10')
     entry1 = tk.Entry(frm, width='40')
     entry1.grid(row=2, column=1)
+
+    # 自定义二维码内容需要用到的列名
+    label_text2 = tk.Label(frm, text='自定义——列名')
+    label_text2.grid(row=3, column=0, ipady='10', ipadx='10', columnspan=1)
+    # 输入框，用于自定义二维码需要输入的内容
+    entry2 = tk.Entry(frm, width='40')
+    entry2.grid(row=3, column=1)
 
     # btn2 = tk.Button(frm, text='存放路径', command=save_place)
     # btn2.grid(row=3, column=0, ipadx='3', ipady='3', padx='10', pady='10')
@@ -320,7 +337,10 @@ if __name__ == "__main__":
     # 第四行是开始生成按钮
     # btn3 = tk.Button(frm, text = '开始生成',command=lambda: gen_qrcode(entry1.get(), size_type.get(),entry2.get()))
     btn3 = tk.Button(frm, text='开始生成', command=lambda: gen_qrcode(entry1.get(), 0))
-    btn3.grid(row=4, column=0, ipadx='3', ipady='3', padx='10', pady='10', columnspan=2)
+    btn3.grid(row=5, column=0, ipadx='3', ipady='3', padx='10', pady='10', columnspan=2)
+
+    label_text3 = tk.Label(frm, text='\n若需要自定义二维码内容，请在第二行内输入列名，用空格分隔。')
+    label_text3.grid(row=6, column=0, ipady='10', ipadx='10', columnspan=2)
 
     root.mainloop()
 
