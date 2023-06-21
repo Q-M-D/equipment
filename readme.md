@@ -42,3 +42,9 @@
 # 有关二维码打印的python文件
 
 待续……
+
+# 关于python生成可执行文件
+
+在当前目录下运行
+```pyinstaller -F -W -i logo.JPG QRcustom.py```
+其中`QRcustom.py`为需要打包的python文件，`logo.JPG`为打包后的exe文件的图标，`-F`表示打包为单个exe文件，`-i`表示指定exe文件的图标,'-w'表示不显示命令行窗口（默认不写）。
