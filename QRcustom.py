@@ -26,20 +26,20 @@ BORDER = 2
 FORTEST = False
 # SCALE=0.3
 
-# 长款比
+# 长款比  TODO: 二维码长宽比
 height_width_ratio = 44.9 / 34.7
 
-# 生成二维码图片的宽度 单位是像素
-target_width = 1000
+# TODO: 生成二维码图片的宽度 单位是像素
+target_width = 680
 target_height = int(target_width * height_width_ratio)
 # print('target_width',target_width)
 # print('target_height',target_height)
 
-# 图片上方宽度
+# TODO: 图片上方宽度
 up_margin = 100
-# 图片上方的文字大小
+# TODO: 图片上方的文字大小
 up_fontsize = 70
-# 图片底部文字大小
+# TODO: 图片底部文字大小
 bottom_fontsize = 55
 
 
@@ -78,11 +78,8 @@ def print_img(file_name, SCALE, size_type):
     hDC.StartPage()
     dib = ImageWin.Dib(bmp)
     scaled_width, scaled_height = [int(scale * i) for i in bmp.size]
-    if size_type == 1:
-        x1 = 120  # 控制位置 越大越向右 （left padding）
-    else:
-        x1 = 170
-    y1 = 10  # 越大越向下 (up padding)
+    x1 = 8   # TODO: 二维码左方空白宽度
+    y1 = 10  # TODO: 二维码上方空白宽度
     x2 = x1 + scaled_width
     y2 = y1 + scaled_height
     dib.draw(hDC.GetHandleOutput(), (x1, y1, x2, y2))
@@ -113,12 +110,12 @@ def imgAddFont_bottom(oldimg, width, height, info_num, info_name, info_code, not
     add_height = target_height - height
     im = Image.new("RGB", (width, add_height), (255, 255, 255))
     draw = ImageDraw.Draw(im)
-    fnt = ImageFont.truetype('C:\\Users\\LD\\Downloads\\auto_qr\\msyh.ttf', bottom_fontsize)
+    fnt = ImageFont.truetype('./msyh.ttf', bottom_fontsize)
 
     # 如果为小尺寸二维码（增大底端文字字号）
     if size_type:
         # 定义字体及字号
-        fnt = ImageFont.truetype('C:\\Users\\LD\\Downloads\\auto_qr\\msyh.ttf', up_fontsize)
+        fnt = ImageFont.truetype('./msyh.ttf', up_fontsize)
         # 居中添加资产编号文字
         w, h = draw.textsize(info_num, font=fnt)
         draw.text(((width - w) / 2, 20), info_num, fill="black", font=fnt)
@@ -129,7 +126,7 @@ def imgAddFont_bottom(oldimg, width, height, info_num, info_name, info_code, not
         draw.text(((width - w) / 2, 20 + up_fontsize + 5), info_name, fill='black', font=fnt)
     # 如果是在建设备
     elif isinstance(note, str) and len(note) != 0 and 'Z' in info_num:
-        fnt = ImageFont.truetype('C:\\Users\\LD\\Downloads\\auto_qr\\msyh.ttf', 48)
+        fnt = ImageFont.truetype('./msyh.ttf', 48)
         w, h = draw.textsize(info_num, font=fnt)
         draw.text(((width - w) / 2, 0), info_num, fill="black", font=fnt)
         # 居中添加资产编号文字
@@ -211,9 +208,9 @@ def save_place():
 # def gen_qrcode(input_path,save_path,size_type):
 def gen_qrcode(input_path, size_type, save_path=''):
     if size_type == 0:
-        SCALE = 0.28
+        SCALE = 0.55
     elif size_type == 1:
-        SCALE = 0.2
+        SCALE = 0.55
     # datadf=pd.read_excel(input_path,encoding='utf-8')
     print(input_path)  # 打印Excel表格的路径
     # datadf=pd.read_excel(input_path,encoding='utf-8',nrows=2)
@@ -270,8 +267,8 @@ def gen_qrcode(input_path, size_type, save_path=''):
 
         # 打印图片并删除保存的图片文件
         # 注释掉以下两行可以不打印，只查看保存的二维码图片样式
-        # print_img(save_file_path, SCALE, size_type)
-        # os.remove(save_file_path)
+        print_img(save_file_path, SCALE, size_type)
+        os.remove(save_file_path)
     print('完成，共生成并打印', len(datadf), '个二维码')
 
 
