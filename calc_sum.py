@@ -190,20 +190,24 @@ class Format():
                     if int(ws.cell(row=i, column=int(asset_id)).value[:10]) == int(
                             ws.cell(row=j, column=int(asset_id)).value[:10]):
                         sum = sum + float(ws.cell(row=j, column=int(asset_value)).value)
+                        # if i != j:
+                        #     print("calc", i, j, sum)
                     else:
                         break
                 # print(i, ws.cell(row=i, column=int(asset_id)).value[11] == '0')
-                if not ws.cell(row=i, column=int(asset_id)).value[11] == '0':
+                if ws.cell(row=i, column=int(asset_id)).value is not None and not ws.cell(row=i, column=int(asset_id)).value[11] == '0':
                     # change the color into yellow
                     ws.cell(row=i, column=int(asset_id)).fill = fill
 
                 ws.cell(row=i, column=int(asset_calc_value)).number_format = '0.00'
                 ws.cell(row=i, column=int(asset_calc_value)).value = sum
                 i = j
+                if ws.cell(row=i, column=int(asset_id)).value is None or ws.cell(row=i, column=int(asset_id)).value == '':
+                    break
 
             i = 2
             while i < max_row:
-                if ws.cell(row=i, column=int(asset_id)).value[11] == '0':
+                if ws.cell(row=i, column=int(asset_id)).value is not None and ws.cell(row=i, column=int(asset_id)).value[11] == '0':
                     ws.cell(row=i, column=int(asset_id)).value = ws.cell(row=i, column=int(asset_id)).value[:10]
                 i = i + 1
 
@@ -249,8 +253,9 @@ class Format():
             max_row = ws.max_row
             i = 2
             while i < max_row:
-                if len(ws.cell(row=i, column=int(asset_id)).value) == 10:
-                    ws.cell(row=i, column=int(asset_id)).value = ws.cell(row=i, column=int(asset_id)).value + '-0'
+                if ws.cell(row=i, column=int(asset_id)).value:
+                    if len(str(ws.cell(row=i, column=int(asset_id)).value)) == 10:
+                        ws.cell(row=i, column=int(asset_id)).value = str(ws.cell(row=i, column=int(asset_id)).value) + '-0'
                 i = i + 1
             if outputfile == '':
                 wb.save("output.xlsx")
